@@ -3,10 +3,10 @@ using James.Shared.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .AddEnvironmentVariables()
-    .Build();
+//var config = new ConfigurationBuilder()
+//    .AddJsonFile("appsettings.json")
+//    .AddEnvironmentVariables()
+//    .Build();
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGraphQLServer()
     .AddQueryType<Query>()
