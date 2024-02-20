@@ -1,12 +1,119 @@
 ﻿@page "/AccountEdit"
 @using System.Diagnostics
+@using James.Shared.Model
 @using StrawberryShake
 @using ReproClient.Components
 @inject IAccountClient accountClient;
-@* @RenderMode="@RenderMode.InteractiveWebAssembly" *@
 
 <h1>Account Editor</h1>
 
+<p>Observe that when this page loads and the final line of the OnInitializedAsync method executes:
+    <ul><li><p>If running through Visual Studio the debug output will show:</p>
+            <p>
+                <span style="font-family: consolas">
+                    MONO_WASM: WebSocket error Error: WebSocket error<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at WebSocket.p (https://localhost:7231/_framework/dotnet.runtime.8.0.2.8j60y5zbay.js:3:53662) {stack: 'Error: WebSocket error<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at WebSocket.p (ht…k/dotnet.runtime.8.0.2.8j60y5zbay.js:3:53662)', message: 'WebSocket error'}</span></p>
+        </li>
+        <li>In the browser developer tools (chrome or edge) you will see: <br/>
+            <span style="font-family: consolas" >web-socket.ts:48  WebSocket connection to 'wss://localhost:7039/graphql' failed: <br />
+                logging.ts:26  MONO_WASM: WebSocket error Error: WebSocket error<br />
+                at WebSocket.p (web-socket.ts:97:23)
+            </span>
+        </li>
+    </ul>
+</p>
+<p>After these errors are thrown, the subscription handler does not run when the subscription is fired.</p>
+<hr/>
+<h3>To prove that this works on the server side, you can use the following GraphQL queries inside banana cake pop:</h3>
+<p>To subscribe to the subscription</p>
+<p style="font-family: consolas">subscription AccountModified{
+    onAccountModified{
+    accountNum,
+    bank
+    }
+    }</p>
+<p>To cause the subscription to fire</p>
+<p style="font-family: consolas">mutation ChangeBank($input:UpdateBankInput!){
+    updateBank(input: $input){
+    account{
+    accountNum
+    bank
+    }
+    }
+    }<br/>
+    Variables:<br/>
+    {
+    "input":{
+    "accountNum": "1005",
+    "bank": "LaSalle National Bank!"
+    }
+    }</p>
 @code {
+    IDisposable session;
+    IEnumerable<string> accountNumbers;
+    IGetAccountByAccountNumber_Account accountFromServer;
+    Account account;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        account = new Account();
+        var result = await accountClient.GetAccountNumbers.ExecuteAsync("", true);
+        accountNumbers = result.Data.FilteredAccountNumbers ?? Array.Empty<string>();
+        await Task.Delay(3000);
+        session = accountClient.AccountModified.Watch().Subscribe(  a=>  AccountModified(a).RunSynchronously());
+    }
+
+    private async Task AccountModified(IOperationResult<IAccountModifiedResult> operationResult)
+    {
+        if (operationResult.Errors.Any())
+            throw new Exception(operationResult.Errors.First().Message);
+        if (operationResult.Data is null)
+            throw new ArgumentNullException(nameof(operationResult.Data), "No data was returned from the subscription.");
+        if (accountFromServer.AccountNum != account?.AccountNum) 
+            //Ignore if not related to the account being editted.
+            return;
+        Debug.Assert(null != account);
+        if (account.Bank == operationResult.Data.OnAccountModified.Bank)
+            //Ignore if user's edit value matches the updated value.
+            return;
+        if (accountFromServer.Bank == account.Bank)
+        //If user hasn't changed the value, simply take the new value
+        {
+            account.Bank = operationResult.Data.OnAccountModified.Bank;
+        }
+        else
+        {
+            //Messagebox to ask user which value to keep.
+        //     var result = await dialogService.OpenAsync("Warning Data Has Changed", ds =>
+        //         @<RadzenStack Gap="1.5rem">
+        //             <p>Data that you have editted has changed on the server.</p>
+        //             <RadzenRow>
+        //                 <RadzenColumn>Field changed:</RadzenColumn>
+        //                 <RadzenColumn>Bank</RadzenColumn>
+        //             </RadzenRow>
+        //             <RadzenRow>
+        //                 <RadzenColumn>Original Value:</RadzenColumn>
+        //                 <RadzenColumn>@accountFromServer.Bank</RadzenColumn>
+        //             </RadzenRow>
+        //             <RadzenRow>
+        //                 <RadzenColumn>New Server Value:</RadzenColumn>
+        //                 <RadzenColumn>@operationResult.Data.OnAccountModified.Bank</RadzenColumn>
+        //             </RadzenRow>
+        //             <RadzenRow>
+        //                 <RadzenColumn>Your Edited Value:</RadzenColumn>
+        //                 <RadzenColumn>@account.Bank</RadzenColumn>
+        //             </RadzenRow>
+        //             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        //                 <RadzenStack Orientation="Orientation.Horizontal">
+        //                     <RadzenButton Text="Keep Server Value" Click="() => ds.Close(true)" Style="width: 80px;"/>
+        //                     <RadzenButton Text="Keep your own edits" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light"/>
+        //                 </RadzenStack>
+        //             </RadzenStack>
+        //         </RadzenStack>);
+        //     if (result == true) 
+        //         account.Bank = operationResult.Data.OnAccountModified.Bank;
+        }
+    }
 
 }

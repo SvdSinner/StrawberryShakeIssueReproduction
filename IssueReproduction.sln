@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReproClient", "ReproClient\ReproClient.csproj", "{EADFB9E0-DD32-41D0-922B-9E9E403C87F7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotChocolatePOC", "HotChocolatePOC\HotChocolatePOC.csproj", "{60981D4E-2E59-46ED-AEBB-A27C83C6437E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "James.Shared", "Shared\James.Shared.csproj", "{580682E6-8A7A-4418-9731-6B3166A3FE62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +19,19 @@ Global
 		{EADFB9E0-DD32-41D0-922B-9E9E403C87F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EADFB9E0-DD32-41D0-922B-9E9E403C87F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EADFB9E0-DD32-41D0-922B-9E9E403C87F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60981D4E-2E59-46ED-AEBB-A27C83C6437E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60981D4E-2E59-46ED-AEBB-A27C83C6437E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60981D4E-2E59-46ED-AEBB-A27C83C6437E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60981D4E-2E59-46ED-AEBB-A27C83C6437E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{580682E6-8A7A-4418-9731-6B3166A3FE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{580682E6-8A7A-4418-9731-6B3166A3FE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{580682E6-8A7A-4418-9731-6B3166A3FE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{580682E6-8A7A-4418-9731-6B3166A3FE62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A5A76A5-A431-4624-8260-48AFC9BF8A17}
 	EndGlobalSection
 EndGlobal
