@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <GraphQL Remove="AccountModifiedSubscription.graphql" />
+    <GraphQL Remove="ShouldNotGenerateExcluded.graphql" />
     <GraphQL Remove="UpdateBankMutation.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ShouldNotGenerateExcluded.graphql" />
   </ItemGroup>
 
   <ItemGroup>
